@@ -1,0 +1,85 @@
+{
+	"info": {
+		"_postman_id": "1482c3b0-21e6-45ac-8db7-e422390570a2",
+		"name": "LevelUp Test",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "17049297"
+	},
+	"item": [
+		{
+			"name": "Create Payment",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "email",
+							"value": "testUser@gmail.co",
+							"description": "Must be a valid Email",
+							"type": "text"
+						},
+						{
+							"key": "cardNumber",
+							"value": "4187 4518 4957 9471",
+							"description": "Must be 16 to 19 characters long",
+							"type": "text"
+						},
+						{
+							"key": "expirationDate",
+							"value": "11/09/2022",
+							"description": "The format is MM/DD/YYYY",
+							"type": "text"
+						},
+						{
+							"key": "cvv",
+							"value": "234",
+							"description": "CVV must be three characters long",
+							"type": "text"
+						},
+						{
+							"key": "name",
+							"value": "testuser",
+							"description": "Name must be a string and is Required",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/validation",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"validation"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Payments",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/api/validation",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"validation"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
