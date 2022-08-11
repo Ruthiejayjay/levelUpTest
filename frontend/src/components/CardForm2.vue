@@ -18,12 +18,9 @@
       class="
         modal
         fade
-        fixed
-        lg:top-48
-        lg:bottom-30
-        sm:left-32
-        md:left-64
-        w-70
+        flex
+        justify-center
+        items-center
         h-full
         outline-none
         overflow-x-hidden overflow-y-auto
@@ -33,7 +30,7 @@
       aria-labelledby="exampleModalCenterTitle"
       aria-modal="true"
       role="dialog"
-      style="z-index: 3"
+      style="z-index: 3; width: 100%; height: 100%"
     >
       <div
         class="
