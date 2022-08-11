@@ -21,7 +21,7 @@ const createPayment = async (req, res, next) => {
         console.log(err);
         return res.status(404).json({ message: 'Creating Payment Failed' })
     };
-    return res.status(201).json({ todo: createdPayment });
+    return res.status(201).json({ Payment: createdPayment });
 };
 
 //get all Payments
