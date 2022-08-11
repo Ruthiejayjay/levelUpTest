@@ -1,23 +1,30 @@
 <template>
-<div>
-  <Navigation class="" />
-  <Cart class="xl:m-20" />
-  <Footer />
+<div class="container-md">
+<NavBar />
+  <Cart />
+  <NavBar />
 </div>
 </template>
 
 <script>
-import Navigation from '@/components/Navigation.vue'
-import Cart from '@/components/Cart.vue'
-import Footer from '@/components/Footer.vue'
+import Cart from './components/Cart.vue'
+import NavBar from './components/NavBar.vue'
 export default {
+  name: 'App',
   components: {
-    Navigation,
-    Footer,
-    Cart
+    NavBar,
+    Cart,
   }
 }
 </script>
 
 <style>
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+  margin-top: 60px;
+}
 </style>

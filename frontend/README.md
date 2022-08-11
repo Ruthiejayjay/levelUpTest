@@ -1,4 +1,4 @@
-# levelupfrontend
+# frontend
 
 ## Project setup
 ```
