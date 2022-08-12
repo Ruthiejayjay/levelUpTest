@@ -15,17 +15,21 @@ const createPayment = async (req, res, next) => {
         cvv: req.body.cvv,
         name: req.body.name
     });
-    try {
-        await createdPayment.save();
-    } catch (err) {
-        console.log(err);
-        return res.status(404).json({ message: 'Creating Payment Failed' })
+    if (luhn.validate(req.body.cardNumber) == 0) {
+        return res.status(422).json({ message: 'Must be a Valid Card Number' })
+    } else {
+        try {
+            await createdPayment.save();
+        } catch (err) {
+            console.log(err);
+            return res.status(404).json({ message: 'Creating Payment Failed' })
+        }
     };
     return res.status(201).json({ Payment: createdPayment });
 };
 
 //get all Payments
-const getAllPayments = async(req, res, next) => {
+const getAllPayments = async (req, res, next) => {
     const payments = await Validation.find().exec();
     return res.status(200).json(payments)
 }
