@@ -271,7 +271,7 @@ export default {
           });
         })
         .catch(function (error) {
-          const errors = error.response.data[0].msg;
+          const errors = error.response.data.message
           Swal.fire({
             icon: "error",
             title: "Oops...",
