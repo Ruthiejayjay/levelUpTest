@@ -5,7 +5,7 @@
       class="form rounded-lg"
       style="width: 25rem; background-color: white; margin-top: 4rem"
     >
-      <form style="padding: 10%">
+      <form style="padding: 10%" @submit.prevent="submitForm">
         <div
           style="
             display: flex;
@@ -35,36 +35,43 @@
           </h6>
           <button @click="toggle" type="submit">&times;</button>
         </div>
+        <div v-for="(error, i) in msg" :key="i" class="py-2">
+          <div class="text-danger">{{ error }}</div>
+        </div>
+        <!-- Name Input -->
+        <div class="form-outline mb-4">
+          <input
+            class="form-control"
+            type="text"
+            placeholder="Name"
+            v-model="data.name"
+            required
+          />
+        </div>
         <!-- Email input -->
         <div class="form-outline mb-4">
           <input
             class="form-control"
             type="email"
             placeholder="Email address"
-            v-model="email"
+            v-model="data.email"
             required
           />
-          <span
-            v-if="msg.email"
-            style="font-size: 0.875rem; line-height: 1.25rem; color: red"
-            >{{ msg.email }}</span
-          >
         </div>
 
         <!-- Card Number -->
-        <div class="form-outline mb-4">
+        <div
+          class="form-outline mb-4"
+          style="display: flex; align-items: center"
+        >
           <input
             class="form-control"
             type="text"
             placeholder="4242 4242 4242 4242"
-            v-model="cardNumber"
+            v-model="data.cardNumber"
             required
           />
-          <span
-            v-if="msg.cardNumber"
-            style="font-size: 0.875rem; line-height: 1.25rem; color: red"
-            >{{ msg.cardNumber }}</span
-          >
+          <img src="@/assets/card.png" style="width: 48px; hieght: 24px" />
         </div>
 
         <div class="row mb-4">
@@ -76,7 +83,7 @@
                   type="text"
                   class="form-control"
                   placeholder="MM"
-                  v-model="month"
+                  v-model="data.month"
                   required
                 />
                 <span style="font-size: 1.125rem; line-height: 1.75rem">/</span>
@@ -84,7 +91,7 @@
                   type="text"
                   class="form-control"
                   placeholder="YYYY"
-                  v-model="year"
+                  v-model="data.year"
                   required
                 />
               </div>
@@ -95,37 +102,16 @@
               <input
                 type="text"
                 placeholder="CVV"
-                v-model="cvv"
+                v-model="data.cvv"
                 required
                 class="form-control"
               />
-              <span
-                v-if="msg.cvv"
-                style="font-size: 0.875rem; line-height: 1.25rem; color: red"
-                >{{ msg.cvv }}</span
-              >
             </div>
           </div>
         </div>
 
-        <div class="form-outline mb-4">
-          <input
-            class="form-control"
-            type="text"
-            placeholder="Name"
-            v-model="name"
-            required
-          />
-          <span
-            v-if="msg.name"
-            style="font-size: 0.875rem; line-height: 1.25rem; color: red"
-            >{{ msg.name }}</span
-          >
-        </div>
-
         <!-- Submit button -->
         <button
-          @click.prevent="submitForm"
           type="submit"
           class="btn btn-lg btn-block"
           style="background-color: #808080; color: white"
@@ -144,121 +130,155 @@ import { format } from "date-fns";
 export default {
   data() {
     return {
-      email: "",
-      cardNumber: "",
-      month: "",
-      year: "",
-      expiryDate: "",
-      cvv: "",
-      name: "",
-      msg: [],
+      data: {
+        email: "",
+        cardNumber: "",
+        month: "",
+        year: "",
+        cvv: "",
+        name: "",
+      },
+
+      msg: {},
     };
   },
   props: ["toggle", "total"],
 
-  watch: {
-    email(value) {
-      this.email = value;
-      this.validateEmail(value);
-    },
-    cardNumber(value) {
-      this.cardNumber = value;
-      this.validateCardNumber(value);
-    },
-    cvv(value) {
-      this.cvv = value;
-      this.validateCvv(value);
-    },
-    name(value) {
-      this.name = value;
-      this.validateName(value);
-    },
-  },
-
   methods: {
-    validateEmail(value) {
-      if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(value)) {
-        this.msg["email"] = "";
-      } else {
-        this.msg["email"] = "Invalid Email Address";
+    validateEmail() {
+      if (
+        !/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(this.data.email)
+      ) {
+        this.msg.email = "Invalid Email Address";
+        return false;
       }
+
+      return true;
     },
 
-    validateCardNumber(value) {
-      let difference = 19 - value.length;
-      if (value.length < 16 || value.length > 19) {
-        this.msg["cardNumber"] =
-          "Must be 16 to 19 characters! " + difference + " characters left";
-      } else {
-        this.msg["cardNumber"] = "";
+    validateCardNumber() {
+      if (
+        this.data.cardNumber.length < 16 ||
+        this.data.cardNumber.length > 19
+      ) {
+        this.msg.cardNumber = "Invalid card number";
+        return false;
       }
+
+      return true;
     },
 
-    validateCvv(value) {
-      let difference = 3 - value.length;
-      if (value.length < 3 || value.length > 3) {
-        this.msg["cvv"] =
-          "Must be 3 characters! " + difference + " characters left";
-      } else {
-        this.msg["cvv"] = "";
+    validateCvv() {
+      if (!this.validateCardNumber()) {
+        return;
       }
+      const americanExpressFirstDigits = this.data.cardNumber.slice(0, 2);
+
+      if (this.data.cvv.length < 3 || this.data.cvv.length > 4) {
+        this.msg.cvv = "Invalid cvv";
+
+        return false;
+      } else if (
+        this.data.cvv.length == 4 &&
+        !(
+          americanExpressFirstDigits == "34" ||
+          americanExpressFirstDigits == "37"
+        )
+      ) {
+        this.msg.cvv = "Invalid cvv";
+
+        return false;
+      } else if (
+        this.data.cvv.length == 3 &&
+        (americanExpressFirstDigits == "34" ||
+          americanExpressFirstDigits == "37")
+      ) {
+        this.msg.cvv = "Invalid cvv";
+
+        return false;
+      }
+
+      return true;
     },
 
-    validateName(value) {
-      if (value.length < 1) {
-        this.msg["name"] = "Name is required";
-      } else {
-        this.msg["name"] = "";
+    validateName() {
+      if (this.data.name.length < 1) {
+        this.msg.name = "Name is required";
+        return false;
       }
+
+      return true;
     },
 
-    validateMonth(value) {
-      if (value.length < 1) {
-        this.msg["month"] = "Month is required";
-      } else {
-        this.msg["name"] = "";
+    validateExpiryDate() {
+      const currentYear = new Date().getFullYear();
+      const currentMonth = new Date().getMonth() + 1;
+
+      if (this.data.year.length < 4) {
+        this.msg.expiryDate = "Invalid Card details";
+
+        return false;
       }
+
+      if (currentYear > this.data.year) {
+        this.msg.expiryDate = "Card has expired";
+
+        return false;
+      }
+
+      if (currentYear == this.data.year && this.data.month <= currentMonth) {
+        this.msg.expiryDate = "Card has expired";
+
+        return false;
+      }
+
+      return true;
     },
 
-    getExpirationDate() {
-      const month = this.month;
-      const year = this.year;
-      const date = new Date();
+    validateForm() {
+      let formStatus = true;
+      if (!this.validateEmail()) {
+        formStatus = false;
+      }
 
-      date.setMonth(Number(month) - 1);
-      date.setYear(year);
-      date.setDate(1);
-      return format(new Date(date), "MM/dd/yyyy");
+      if (!this.validateCardNumber()) {
+        formStatus = false;
+      }
+
+      if (!this.validateCvv()) {
+        formStatus = false;
+      }
+
+      if (!this.validateName()) {
+        formStatus = false;
+      }
+
+      if (!this.validateExpiryDate()) {
+        formStatus = false;
+      }
+
+      return formStatus;
     },
 
     submitForm() {
-      this.validateEmail(this.email);
-      this.validateCardNumber(this.cardNumber);
-      this.validateCvv(this.cvv);
-      this.validateName(this.name);
+      this.msg = {};
+      if (!this.validateForm()) {
+        return;
+      }
 
       const axios = require("axios");
-      const qs = require("qs");
 
-      var data = qs.stringify({
-        email: this.email,
-        cardNumber: this.cardNumber,
-        expirationDate: this.getExpirationDate(),
-        cvv: this.cvv,
-        name: this.name,
-      });
-      var config = {
+      const config = {
         method: "post",
         url: "http://localhost:5000/api/validation",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
-        data: data,
+        data: this.data,
       };
 
       axios(config)
         .then(function (response) {
-          //console.log(JSON.stringify(response.data));
           const Toast = Swal.mixin({
             toast: true,
             position: "top-end",

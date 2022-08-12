@@ -1,8 +1,8 @@
 <template>
   <div style="padding-top: 50px; padding-bottom: 80px">
     <h3>Products</h3>
-    <div class="main d-flex justify-content-around">
-      <div class="row">
+    <div class="main d-flex w-100">
+      <div class="row d-flex justify-content-between w-100">
         <div class="col-md-8">
           <table class="table table-bordered">
             <thead>
@@ -78,10 +78,9 @@
             </div>
           </div>
         </div>
-
-        <Card v-if="showForm" :toggle="toggleForm" :total="totalPrice" style="margin-bottom: 10rem" />
       </div>
     </div>
+    <Card v-if="showForm" :toggle="toggleForm" :total="totalPrice" style="margin-bottom: 10rem" />
   </div>
 </template>
 
