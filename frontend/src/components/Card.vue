@@ -6,7 +6,13 @@
       style="width: 25rem; background-color: white; margin-top: 4rem"
     >
       <form style="padding: 10%">
-        <div style="display: flex; align-items: center; justify-content: space-between;">
+        <div
+          style="
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+          "
+        >
           <h3
             style="
               font-size: 1.125rem;
@@ -271,12 +277,20 @@ export default {
           });
         })
         .catch(function (error) {
-          const errors = error.response.data.message
-          Swal.fire({
-            icon: "error",
-            title: "Oops...",
-            text: errors,
-          });
+          if (error) {
+            Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: error.response.data.message,
+            });
+          }
+          if (error) {
+            Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: error.response.data[0].msg,
+            });
+          }
         });
     },
   },
