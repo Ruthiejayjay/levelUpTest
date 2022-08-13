@@ -1,8 +1,7 @@
 <template>
-<div class="container-md">
+<div class="container">
 <NavBar />
   <Cart />
-  <NavBar />
 </div>
 </template>
 

@@ -1,39 +1,14 @@
 <template>
   <div class="d-flex justify-content-center">
-    <div class="back"></div>
-    <div
-      class="form rounded-lg"
-      style="width: 25rem; background-color: white; margin-top: 4rem"
-    >
-      <form style="padding: 10%" @submit.prevent="submitForm">
-        <div
-          style="
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-          "
-        >
-          <h3
-            style="
-              font-size: 1.125rem;
-              line-height: 1.5rem;
-              font-weight: 400;
-              color: #262626;
-            "
-          >
+    <div class="form rounded-lg bg-white">
+      <form @submit.prevent="submitForm" class="mw-100 lg-mw-50 mt-2">
+        <div class="d-flex align-items-center justify-content-between">
+          <h3 class="font-weight-bold fs-5" style="color: #262626">
             Fill in Your Card Details
           </h3>
-          <h6
-            style="
-              font-weight: 400;
-              font-size: 0.875rem;
-              line-height: 1.25rem;
-              color: #737373;
-            "
-          >
+          <h6 class="font-weight-bold fs-6" style="color: #737373">
             Total: &#8358;{{ total }}
           </h6>
-          <button @click="toggle" type="submit">&times;</button>
         </div>
         <div v-for="(error, i) in msg" :key="i" class="py-2">
           <div class="text-danger">{{ error }}</div>
@@ -60,10 +35,7 @@
         </div>
 
         <!-- Card Number -->
-        <div
-          class="form-outline mb-4"
-          style="display: flex; align-items: center"
-        >
+        <div class="form-outline mb-4 d-flex align-items-center">
           <input
             class="form-control"
             type="text"
@@ -71,14 +43,13 @@
             v-model="data.cardNumber"
             required
           />
-          <img src="@/assets/card.png" style="width: 48px; hieght: 24px" />
         </div>
 
         <div class="row mb-4">
           <!-- Date -->
           <div class="col">
             <div class="row-cols-2">
-              <div class="form-outline">
+              <div class="form-outline d-flex justify-content-between w-100">
                 <input
                   type="text"
                   class="form-control"
@@ -86,7 +57,6 @@
                   v-model="data.month"
                   required
                 />
-                <span style="font-size: 1.125rem; line-height: 1.75rem">/</span>
                 <input
                   type="text"
                   class="form-control"
@@ -111,13 +81,23 @@
         </div>
 
         <!-- Submit button -->
-        <button
-          type="submit"
-          class="btn btn-lg btn-block"
-          style="background-color: #808080; color: white"
-        >
-          Buy
-        </button>
+        <div class="d-flex justify-content-between">
+          <button
+            type="submit"
+            class="btn btn-lg btn-block"
+            style="background-color: #808080; color: white"
+          >
+            Buy
+          </button>
+
+          <button
+            @click="toggle"
+            type="submit"
+            class="btn btn-lg btn-block btn-danger"
+          >
+            Cancel
+          </button>
+        </div>
       </form>
     </div>
   </div>
@@ -125,7 +105,6 @@
 
 <script>
 import Swal from "sweetalert2";
-import { format } from "date-fns";
 
 export default {
   data() {
@@ -271,9 +250,6 @@ export default {
       const config = {
         method: "post",
         url: "http://localhost:5000/api/validation",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
         data: this.data,
       };
 
@@ -296,21 +272,11 @@ export default {
             title: "Payment Made Successfully",
           });
         })
-        .catch(function (error) {
-          if (error) {
-            Swal.fire({
-              icon: "error",
-              title: "Oops...",
-              text: error.response.data.message,
-            });
-          }
-          if (error) {
-            Swal.fire({
-              icon: "error",
-              title: "Oops...",
-              text: error.response.data[0].msg,
-            });
-          }
+        .catch((error) => {
+          console.log(error.response);
+          error.response.data.forEach((error) => {
+            this.msg[error.param] = error.msg;
+          });
         });
     },
   },
@@ -320,24 +286,10 @@ export default {
 </script>
 
 <style>
-.back {
-  z-index: 2;
-  height: auto;
-  widows: auto;
-  position: fixed;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  background-color: black;
-  opacity: 0.75;
-}
 .form {
   display: flex;
-  justify-content: center;
   align-items: center;
-  z-index: 3;
-  width: 100%;
   height: 100%;
+  margin-top: 2rem;
 }
 </style>

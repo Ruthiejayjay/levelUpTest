@@ -1,4 +1,3 @@
-const luhn = require('luhn');
 
 const Validation = require('../models/validate');
 const { validationResult } = require('express-validator')
@@ -10,21 +9,20 @@ const createPayment = async (req, res, next) => {
     }
     const createdPayment = new Validation({
         email: req.body.email,
-        cardNumber: luhn.validate(req.body.cardNumber),
-        expirationDate: req.body.expirationDate,
-        cvv: req.body.cvv,
-        name: req.body.name
+        cardNumber: req.body.cardNumber,
+        cardMonth: req.body.month,
+        cardYear: req.body.year,
+        cardCvv: req.body.cvv,
+        cardName: req.body.name
     });
-    if (luhn.validate(req.body.cardNumber) == 0) {
-        return res.status(422).json({ message: 'Must be a Valid Card Number' })
-    } else {
-        try {
-            await createdPayment.save();
-        } catch (err) {
-            console.log(err);
-            return res.status(404).json({ message: 'Creating Payment Failed' })
-        }
-    };
+
+    try {
+        await createdPayment.save();
+    } catch (err) {
+        console.log(err);
+        return res.status(404).json({ message: 'Creating Payment Failed' })
+    }
+
     return res.status(201).json({ Payment: createdPayment });
 };
 
